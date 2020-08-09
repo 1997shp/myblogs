@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response,get_object_or_404
 from django.core.paginator import Paginator
 from .models import Blog , BlogType
 from django.conf import settings
-
+from datetime import datetime
 each_page_blogs_number = 2
 # Create your views here.
 
@@ -45,14 +45,21 @@ def blog_list(request):
     return render_to_response('blog/blog_list.html',context)
 
 def blog_detail(request,blog_pk):
+    blog = get_object_or_404(Blog,pk = blog_pk)
+    # if not request.COOKIES.get('blog_%s_readed' % blog_pk):
+
+    blog.readed_num += 1
+    blog.save()
 
     context = {}
-    blog = get_object_or_404(Blog,pk = blog_pk)
+    
     context['previous_blog'] = Blog.objects.filter(created_time__gt = blog.created_time).last()
     context['next_blog'] = Blog.objects.filter(created_time__lt = blog.created_time).first()
     context['blog'] = blog
+    response = render_to_response('blog/blog_detail.html',context) # 响应
+    response.set_cookie('blog_%s_readed' % blog_pk,'true')
 
-    return render_to_response('blog/blog_detail.html',context)
+    return response
 
 
 def blogs_with_type(request,blog_type_pk):

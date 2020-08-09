@@ -24,11 +24,18 @@ class Blog(models.Model):
     #作者
     author = models.ForeignKey(User,on_delete=models.DO_NOTHING)
 
+    #阅读数字段
+    readed_num = models.IntegerField(default=0)
+
     #创建时间
     created_time = models.DateTimeField(auto_now_add = True)
 
     #最后修改时间
     last_updated_time = models.DateTimeField(auto_now = True)
+
+    # def read_num(self):
+
+    #     return self.ReadNum.readed_num
 
     def __str__(self):
 
@@ -37,3 +44,7 @@ class Blog(models.Model):
 
     class Meta:
         ordering = ["-created_time"]
+
+class ReadNum(models.Model):
+
+    blog = models.OneToOneField(Blog,on_delete=models.DO_NOTHING)
